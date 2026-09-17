@@ -10,7 +10,7 @@ import type {
   JobRequirement,
 } from '@/types';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -98,7 +98,7 @@ export const fileApi = {
    */
   getUploadStatus: async (uploadId: string) => {
     const response = await axiosInstance.get<UploadResponse>(
-      `/api/v1/upload/${uploadId}/status`
+      `/api/v1/upload/${encodeURIComponent(uploadId)}/status`
     );
     return response.data;
   },
@@ -111,7 +111,7 @@ export const cvApi = {
    */
   processCV: async (fileId: string) => {
     const response = await axiosInstance.post<ProcessCVResponse>(
-      `/api/v1/cv/${fileId}/process`
+      `/api/v1/cv/${encodeURIComponent(fileId)}/process`
     );
     return response.data;
   },
@@ -132,7 +132,7 @@ export const cvApi = {
    */
   getCV: async (candidateId: string) => {
     const response = await axiosInstance.get<Candidate>(
-      `/api/v1/cv/${candidateId}`
+      `/api/v1/cv/${encodeURIComponent(candidateId)}`
     );
     return response.data;
   },
@@ -152,7 +152,7 @@ export const cvApi = {
    * Delete CV
    */
   deleteCV: async (candidateId: string) => {
-    const response = await axiosInstance.delete(`/api/v1/cv/${candidateId}`);
+    const response = await axiosInstance.delete(`/api/v1/cv/${encodeURIComponent(candidateId)}`);
     return response.data;
   },
 };
@@ -167,7 +167,7 @@ export const scoringApi = {
     jobRequirementId: string
   ) => {
     const response = await axiosInstance.post<ScoreResponse>(
-      `/api/v1/score/${candidateId}`,
+      `/api/v1/score/${encodeURIComponent(candidateId)}`,
       { job_requirement_id: jobRequirementId }
     );
     return response.data;
@@ -200,7 +200,7 @@ export const scoringApi = {
     params?: { limit?: number; offset?: number }
   ) => {
     const response = await axiosInstance.get<Candidate[]>(
-      `/api/v1/score/ranked/${jobRequirementId}`,
+      `/api/v1/score/ranked/${encodeURIComponent(jobRequirementId)}`,
       { params }
     );
     return response.data;
@@ -211,7 +211,7 @@ export const scoringApi = {
    */
   getScoreDetails: async (candidateId: string) => {
     const response = await axiosInstance.get<ScoreResponse>(
-      `/api/v1/score/${candidateId}/details`
+      `/api/v1/score/${encodeURIComponent(candidateId)}/details`
     );
     return response.data;
   },
@@ -235,7 +235,7 @@ export const jobApi = {
    */
   getJobRequirement: async (jobId: string) => {
     const response = await axiosInstance.get<JobRequirement>(
-      `/api/v1/jobs/${jobId}`
+      `/api/v1/jobs/${encodeURIComponent(jobId)}`
     );
     return response.data;
   },
@@ -258,7 +258,7 @@ export const jobApi = {
     data: Partial<JobRequirement>
   ) => {
     const response = await axiosInstance.put<JobRequirement>(
-      `/api/v1/jobs/${jobId}`,
+      `/api/v1/jobs/${encodeURIComponent(jobId)}`,
       data
     );
     return response.data;
@@ -268,7 +268,7 @@ export const jobApi = {
    * Delete job requirement
    */
   deleteJobRequirement: async (jobId: string) => {
-    const response = await axiosInstance.delete(`/api/v1/jobs/${jobId}`);
+    const response = await axiosInstance.delete(`/api/v1/jobs/${encodeURIComponent(jobId)}`);
     return response.data;
   },
 };
