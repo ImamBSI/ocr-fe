@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Upload, FileText, CheckCircle, AlertCircle } from 'lucide-react';
-import { useUploadCV } from '@/hooks';
-import { useJobStore } from '@/store';
+import { useUploadCV } from '@/hooks/useUploadCV';
+import { useJobStore } from '@/storage';
 
 interface CVUploaderProps {
   onUploadSuccess?: () => void;

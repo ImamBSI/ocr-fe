@@ -8,7 +8,7 @@ import {
   Eye,
 } from 'lucide-react';
 import type { Candidate } from '@/types';
-import { useCandidateStore, useScoringStore } from '@/store';
+import { useCandidateStore, useScoringStore } from '@/storage';
 import { cvApi } from '@/services/api';
 
 interface CandidateListProps {

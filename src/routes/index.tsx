@@ -1,8 +1,7 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import  Layout  from '@/components/layout';
-import  Home  from '@/pages/Home';
-import  NotFound  from '@/pages/NotFound';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Layout from '@/layout';
+import Home from '@/pages/Home';
+import NotFound from '@/pages/NotFound';
 
 export const AppRoutes = () => {
   return (

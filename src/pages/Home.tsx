@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Plus } from 'lucide-react';
-import { useUIStore, useCandidateStore, useJobStore, useScoringStore } from '../store';
-import { useProcessCV, useScoring, useJobRequirements } from '../hooks';
+import { useUIStore, useCandidateStore, useJobStore, useScoringStore } from '@/storage';
+import { useScoring } from '@/hooks/useScoring';
+import {useJobRequirements} from '@/hooks/useJobRequirements';
 import { CVUploader } from '@/components/cv-uploader';
 import { CandidateList } from '@/components/candidate-list';
 import { JobRequirementForm } from '@/components/job-req-form';
+import { useProcessCV } from '@/hooks/useProcessCV';
 
 export const Home: React.FC = () => {
   const { currentTab, setShowModal, setModalType, showModal, modalType } =

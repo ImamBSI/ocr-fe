@@ -10,8 +10,8 @@ import {
   Home,
   ExternalLink,
 } from 'lucide-react';
-import { useUIStore } from '../store';
-import { useJobRequirements, useSystem } from '../hooks';
+import { useUIStore } from '@/storage';
+import { useJobRequirements, useSystem } from '@/hooks';
 
 export const Layout: React.FC = () => {
   const {
@@ -118,7 +118,7 @@ export const Layout: React.FC = () => {
         {/* Footer */}
         <div className="border-t border-gray-200 p-2">
           <a
-            href="https://github.com"
+            href=""
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-3 px-3 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
