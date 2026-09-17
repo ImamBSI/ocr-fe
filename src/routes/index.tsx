@@ -1,18 +1,20 @@
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import Home from '@/pages/Home'
-import NotFound from '@/pages/NotFound'
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import  Layout  from '@/components/layout';
+import  Home  from '@/pages/Home';
+import  NotFound  from '@/pages/NotFound';
 
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <Home />,
-  },
-  {
-    path: '*',
-    element: <NotFound />,
-  },
-])
+export const AppRoutes = () => {
+  return (
+    <Router>
+      <Routes>
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="*" element={<NotFound />} />
+        </Route>
+      </Routes>
+    </Router>
+  );
+};
 
-export function AppRouter() {
-  return <RouterProvider router={router} />
-}
+export default AppRoutes;
