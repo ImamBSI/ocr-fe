@@ -11,7 +11,8 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { useUIStore } from '@/storage';
-import { useJobRequirements, useSystem } from '@/hooks';
+import { useJobRequirements } from '@/hooks/useJobRequirements';
+import { useSystem } from '@/hooks/useSystem';
 
 export const Layout: React.FC = () => {
   const {
