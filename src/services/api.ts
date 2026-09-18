@@ -209,9 +209,10 @@ export const scoringApi = {
   /**
    * Get score details
    */
-  getScoreDetails: async (candidateId: string) => {
+  getScoreDetails: async (candidateId: string, jobId: string) => {
     const response = await axiosInstance.get<ScoreResponse>(
-      `/api/score/${encodeURIComponent(candidateId)}/details`
+      `/api/score/${encodeURIComponent(candidateId)}/details`,
+      { params: { job_id: jobId } }
     );
     return response.data;
   },

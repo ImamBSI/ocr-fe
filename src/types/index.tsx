@@ -6,14 +6,15 @@ export interface Candidate {
   phone?: string;
   experience_years: number;
   skills: string[];
-  education: string;
-  score: number;
-  matched_criteria: Record<string, number>;
-  cv_text: string;
-  file_path: string;
-  file_name: string;
-  created_at: string;
+  education?: string;
+  score?: number;
+  matched_criteria?: Record<string, number>;
+  cv_text?: string;
+  file_path?: string;
+  file_name?: string;
+  created_at?: string;
   ranking?: number;
+  is_processed?: number | boolean;
 }
 
 // Scoring Criteria

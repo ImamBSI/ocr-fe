@@ -1,36 +1,36 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Plus } from 'lucide-react';
-import { useUIStore, useCandidateStore, useJobStore, useScoringStore } from '@/storage';
+import { useUIStore, useCandidateStore, useJobStore, useScoringStore, useUploadStore } from '@/storage';
 import { useScoring } from '@/hooks/useScoring';
 import {useJobRequirements} from '@/hooks/useJobRequirements';
 import { CVUploader } from '@/components/cv-uploader';
 import { CandidateList } from '@/components/candidate-list';
 import { JobRequirementForm } from '@/components/job-req-form';
 import { useProcessCV } from '@/hooks/useProcessCV';
+import type { JobRequirement } from '@/types';
 
 export const Home: React.FC = () => {
   const { currentTab, setShowModal, setModalType, showModal, modalType } =
     useUIStore();
   const { candidates } = useCandidateStore();
   const { scoredCandidates } = useScoringStore();
-  const { jobs, selectedJob } = useJobStore();
-  const { processCV, listCVs, isLoading: processingLoading } = useProcessCV();
+  const { jobs, selectedJob, setSelectedJob } = useJobStore();
+  const { uploads } = useUploadStore();
+  const { processBatch, listCVs, isLoading: processingLoading } = useProcessCV();
   const { scoreBatch, isLoading: scoringLoading } = useScoring();
   const { fetchJobs } = useJobRequirements();
 
   const [localLoading, setLocalLoading] = useState(false);
+  const [editingJob, setEditingJob] = useState<JobRequirement | null>(null);
 
-  // Process all pending candidates
+  // Process semua upload yang belum diproses, lalu refresh daftar candidate
   const handleProcessAllCandidates = async () => {
-    if (candidates.length === 0) {
-      alert('No candidates to process');
-      return;
-    }
-
     setLocalLoading(true);
     try {
-      // In a real scenario, you'd have file IDs from upload responses
-      // This is a placeholder for the workflow
+      const uploadIds = uploads.map((u) => u.id).filter(Boolean);
+      if (uploadIds.length > 0) {
+        await processBatch(uploadIds);
+      }
       await listCVs();
     } catch (error) {
       console.error('Error processing candidates:', error);
@@ -87,6 +87,7 @@ export const Home: React.FC = () => {
               </p>
               <button
                 onClick={() => {
+                  setEditingJob(null);
                   setShowModal(true);
                   setModalType('job-create');
                 }}
@@ -100,8 +101,8 @@ export const Home: React.FC = () => {
             <select
               value={selectedJob?.id || ''}
               onChange={(e) => {
-                const job = jobs.find((j) => j.id === e.target.value);
-                // You'll need to add setSelectedJob to job store
+                const job = jobs.find((j) => j.id === e.target.value) || null;
+                setSelectedJob(job);
               }}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
@@ -240,6 +241,7 @@ export const Home: React.FC = () => {
           </div>
           <button
             onClick={() => {
+              setEditingJob(null);
               setShowModal(true);
               setModalType('job-create');
             }}
@@ -286,7 +288,7 @@ export const Home: React.FC = () => {
                   </div>
                   <button
                     onClick={() => {
-                      // TODO: Implement edit
+                      setEditingJob(job);
                       setShowModal(true);
                       setModalType('job-edit');
                     }}
@@ -302,10 +304,15 @@ export const Home: React.FC = () => {
 
         {/* Job Form Modal */}
         <JobRequirementForm
-          isOpen={showModal && modalType === 'job-create'}
+          isOpen={
+            showModal &&
+            (modalType === 'job-create' || modalType === 'job-edit')
+          }
+          editingJob={editingJob || undefined}
           onClose={() => {
             setShowModal(false);
             setModalType('none');
+            setEditingJob(null);
             fetchJobs();
           }}
         />

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Candidate, JobRequirement, UploadResponse, ScoreResponse } from '../types';
+import type { Candidate, JobRequirement, UploadResponse } from '../types';
 
 // ==================== UPLOAD STORE ====================
 interface UploadState {
@@ -98,19 +98,19 @@ export const useScoringStore = create<ScoringState>((set, get) => ({
   getFilteredAndSorted: () => {
     const state = get();
     let filtered = state.scoredCandidates.filter(
-      (c) => c.score >= state.filterMinScore
+      (c) => (c.score ?? 0) >= state.filterMinScore
     );
 
     filtered.sort((a, b) => {
       let compareValue = 0;
       if (state.sortBy === 'score') {
-        compareValue = a.score - b.score;
+        compareValue = (a.score ?? 0) - (b.score ?? 0);
       } else if (state.sortBy === 'name') {
         compareValue = a.name.localeCompare(b.name);
       } else if (state.sortBy === 'date') {
         compareValue =
-          new Date(a.created_at).getTime() -
-          new Date(b.created_at).getTime();
+          new Date(a.created_at || 0).getTime() -
+          new Date(b.created_at || 0).getTime();
       }
 
       return state.sortOrder === 'desc' ? -compareValue : compareValue;

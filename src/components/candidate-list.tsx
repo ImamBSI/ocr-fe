@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   ChevronDown,
   Mail,
@@ -25,7 +25,7 @@ export const CandidateList: React.FC<CandidateListProps> = ({
   isLoading = false,
 }) => {
   const { candidates: storeCandidates, removeCandidate } = useCandidateStore();
-  const { scoredCandidates, getFilteredAndSorted, topN, setTopN } =
+  const { getFilteredAndSorted, topN, setTopN } =
     useScoringStore();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
@@ -51,17 +51,19 @@ export const CandidateList: React.FC<CandidateListProps> = ({
     setExpandedId(expandedId === id ? null : id);
   };
 
-  const getScoreColor = (score: number): string => {
-    if (score >= 80) return 'bg-green-100 text-green-700';
-    if (score >= 60) return 'bg-yellow-100 text-yellow-700';
-    if (score >= 40) return 'bg-orange-100 text-orange-700';
+  const getScoreColor = (score?: number): string => {
+    const s = score ?? 0;
+    if (s >= 80) return 'bg-green-100 text-green-700';
+    if (s >= 60) return 'bg-yellow-100 text-yellow-700';
+    if (s >= 40) return 'bg-orange-100 text-orange-700';
     return 'bg-red-100 text-red-700';
   };
 
-  const getScoreBadge = (score: number): string => {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-yellow-600';
-    if (score >= 40) return 'text-orange-600';
+  const getScoreBadge = (score?: number): string => {
+    const s = score ?? 0;
+    if (s >= 80) return 'text-green-600';
+    if (s >= 60) return 'text-yellow-600';
+    if (s >= 40) return 'text-orange-600';
     return 'text-red-600';
   };
 
@@ -105,7 +107,7 @@ export const CandidateList: React.FC<CandidateListProps> = ({
 
       {/* Candidate Cards */}
       <div className="space-y-2">
-        {candidates.map((candidate, index) => (
+        {candidates.map((candidate) => (
           <div
             key={candidate.id}
             className="border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
@@ -156,7 +158,7 @@ export const CandidateList: React.FC<CandidateListProps> = ({
                       )}`}
                     >
                       <div className="text-2xl font-bold">
-                        {candidate.score.toFixed(1)}
+                        {candidate.score?.toFixed(1) ?? '0.0'}
                       </div>
                       <div className="text-xs">Score</div>
                     </div>
@@ -212,34 +214,36 @@ export const CandidateList: React.FC<CandidateListProps> = ({
                 </div>
 
                 {/* Matched Criteria */}
-                {showScore && Object.keys(candidate.matched_criteria).length > 0 && (
-                  <div>
-                    <span className="font-medium text-gray-700">
-                      Matched Criteria
-                    </span>
-                    <div className="ml-6 mt-2 grid grid-cols-2 gap-2">
-                      {Object.entries(candidate.matched_criteria).map(
-                        ([key, value]) => (
-                          <div
-                            key={key}
-                            className="flex items-center justify-between bg-white border border-gray-300 rounded px-3 py-2"
-                          >
-                            <span className="text-xs font-medium text-gray-600">
-                              {key}:
-                            </span>
-                            <span
-                              className={`text-xs font-bold ${getScoreBadge(
-                                value as number
-                              )}`}
+                {showScore &&
+                  candidate.matched_criteria &&
+                  Object.keys(candidate.matched_criteria).length > 0 && (
+                    <div>
+                      <span className="font-medium text-gray-700">
+                        Matched Criteria
+                      </span>
+                      <div className="ml-6 mt-2 grid grid-cols-2 gap-2">
+                        {Object.entries(candidate.matched_criteria).map(
+                          ([key, value]) => (
+                            <div
+                              key={key}
+                              className="flex items-center justify-between bg-white border border-gray-300 rounded px-3 py-2"
                             >
-                              {(value as number).toFixed(1)}
-                            </span>
-                          </div>
-                        )
-                      )}
+                              <span className="text-xs font-medium text-gray-600">
+                                {key}:
+                              </span>
+                              <span
+                                className={`text-xs font-bold ${getScoreBadge(
+                                  value as number
+                                )}`}
+                              >
+                                {(value as number).toFixed(1)}
+                              </span>
+                            </div>
+                          )
+                        )}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
 
                 {/* Actions */}
                 <div className="flex gap-2 pt-2">

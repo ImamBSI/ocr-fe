@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { X, Plus, Trash2 } from 'lucide-react';
 import type { JobRequirement, ScoringCriteria } from '@/types';
 import { useJobRequirements } from '@/hooks/useJobRequirements';
-import { useJobStore } from '@/storage';
 
 interface JobRequirementFormProps {
   isOpen: boolean;
@@ -30,7 +29,6 @@ export const JobRequirementForm: React.FC<JobRequirementFormProps> = ({
   const [error, setError] = useState('');
 
   const { createJob, updateJobRequirement, isLoading } = useJobRequirements();
-  const { selectedJob } = useJobStore();
 
   useEffect(() => {
     if (editingJob) {
