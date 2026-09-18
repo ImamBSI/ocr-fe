@@ -113,7 +113,7 @@ export const JobRequirementForm: React.FC<JobRequirementFormProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-xl font-bold text-gray-900">
-            {editingJob ? 'Edit Job Requirement' : 'Create New Job Requirement'}
+            {editingJob ? 'Edit Job Requirement' : 'Buat Job Requirement Baru'}
           </h2>
           <button
             onClick={onClose}
@@ -134,13 +134,13 @@ export const JobRequirementForm: React.FC<JobRequirementFormProps> = ({
           {/* Title */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Job Title *
+              Judul Pekerjaan *
             </label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="e.g., Senior Software Engineer"
+              placeholder="mis. Senior Software Engineer"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -148,12 +148,12 @@ export const JobRequirementForm: React.FC<JobRequirementFormProps> = ({
           {/* Description */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Description
+              Deskripsi
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Job description and responsibilities..."
+              placeholder="Deskripsi pekerjaan dan tanggung jawab..."
               rows={4}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
@@ -163,7 +163,7 @@ export const JobRequirementForm: React.FC<JobRequirementFormProps> = ({
           <div>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900">
-                Scoring Criteria
+                Kriteria Penilaian
               </h3>
               <button
                 type="button"
@@ -171,7 +171,7 @@ export const JobRequirementForm: React.FC<JobRequirementFormProps> = ({
                 className="flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors text-sm font-medium"
               >
                 <Plus className="w-4 h-4" />
-                Add Criteria
+                Tambah Kriteria
               </button>
             </div>
 
@@ -179,7 +179,7 @@ export const JobRequirementForm: React.FC<JobRequirementFormProps> = ({
               {criteria.length === 0 ? (
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                   <p className="text-gray-500">
-                    No criteria added yet. Click "Add Criteria" to get started.
+                    Belum ada kriteria. Klik "Tambah Kriteria" untuk memulai.
                   </p>
                 </div>
               ) : (
@@ -190,7 +190,7 @@ export const JobRequirementForm: React.FC<JobRequirementFormProps> = ({
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-medium text-gray-700">
-                        Criteria {index + 1}
+                        Kriteria {index + 1}
                       </span>
                       <button
                         type="button"
@@ -208,44 +208,117 @@ export const JobRequirementForm: React.FC<JobRequirementFormProps> = ({
                       onChange={(e) =>
                         updateCriteria(index, { name: e.target.value })
                       }
-                      placeholder="Criteria name (e.g., Python Skills)"
+                      placeholder="Nama kriteria (mis. Kemampuan Python)"
                       className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
 
                     <div className="grid grid-cols-2 gap-3">
                       {/* Type */}
-                      <select
-                        value={criterion.type}
-                        onChange={(e) =>
-                          updateCriteria(index, {
-                            type: e.target.value as ScoringCriteria['type'],
-                          })
-                        }
-                        className="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      >
-                        <option value="skill">Skill</option>
-                        <option value="experience">Experience</option>
-                        <option value="education">Education</option>
-                        <option value="keyword">Keyword</option>
-                        <option value="custom">Custom</option>
-                      </select>
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          Tipe Penilaian
+                        </label>
+                        <select
+                          value={criterion.type}
+                          onChange={(e) =>
+                            updateCriteria(index, {
+                              type: e.target.value as ScoringCriteria['type'],
+                            })
+                          }
+                          className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="skill">Skill</option>
+                          <option value="experience">Experience</option>
+                          <option value="education">Education</option>
+                          <option value="keyword">Keyword</option>
+                          <option value="custom">Custom</option>
+                        </select>
+                        <p className="text-xs text-gray-400 mt-1">
+                          {criterion.type === 'skill' &&
+                            'Skor = % skill CV yang cocok dengan keywords.'}
+                          {criterion.type === 'experience' &&
+                            'Skor dari tahun pengalaman CV vs rentang min-max.'}
+                          {criterion.type === 'education' &&
+                            'Skor dari level pendidikan di CV.'}
+                          {criterion.type === 'keyword' &&
+                            'Skor = % keywords yang muncul di teks CV.'}
+                          {criterion.type === 'custom' &&
+                            'Skor tetap 50 (butuh implementasi custom).'}
+                        </p>
+                      </div>
 
                       {/* Weight */}
-                      <input
-                        type="number"
-                        min="0"
-                        max="10"
-                        step="0.1"
-                        value={criterion.weight}
-                        onChange={(e) =>
-                          updateCriteria(index, {
-                            weight: parseFloat(e.target.value),
-                          })
-                        }
-                        placeholder="Weight (0-10)"
-                        className="px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
+                      <div>
+                        <label className="block text-xs font-medium text-gray-600 mb-1">
+                          Bobot (kepentingan 0-10)
+                        </label>
+                        <input
+                          type="number"
+                          min="0"
+                          max="10"
+                          step="0.1"
+                          value={criterion.weight}
+                          onChange={(e) =>
+                            updateCriteria(index, {
+                              weight: parseFloat(e.target.value),
+                            })
+                          }
+                          placeholder="0-10"
+                          className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <p className="text-xs text-gray-400 mt-1">
+                          Makin besar, makin berpengaruh ke skor akhir.
+                        </p>
+                      </div>
                     </div>
+
+                    {/* Min/Max Tahun untuk Experience */}
+                    {criterion.type === 'experience' && (
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">
+                            Min Tahun
+                          </label>
+                          <input
+                            type="number"
+                            min="0"
+                            step="1"
+                            value={criterion.min_value ?? ''}
+                            onChange={(e) =>
+                              updateCriteria(index, {
+                                min_value:
+                                  e.target.value === ''
+                                    ? undefined
+                                    : parseFloat(e.target.value),
+                              })
+                            }
+                            placeholder="mis. 2"
+                            className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1">
+                            Max Tahun
+                          </label>
+                          <input
+                            type="number"
+                            min="0"
+                            step="1"
+                            value={criterion.max_value ?? ''}
+                            onChange={(e) =>
+                              updateCriteria(index, {
+                                max_value:
+                                  e.target.value === ''
+                                    ? undefined
+                                    : parseFloat(e.target.value),
+                              })
+                            }
+                            placeholder="mis. 6"
+                            className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
+                      </div>
+                    )}
 
                     {/* Description */}
                     <textarea
@@ -253,17 +326,17 @@ export const JobRequirementForm: React.FC<JobRequirementFormProps> = ({
                       onChange={(e) =>
                         updateCriteria(index, { description: e.target.value })
                       }
-                      placeholder="How to score this criteria..."
+                      placeholder="Cara penilaian kriteria ini..."
                       rows={2}
                       className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
 
-                    {/* Keywords (for skill and keyword types) */}
+                    {/* Keywords (untuk tipe skill dan keyword) */}
                     {(criterion.type === 'skill' ||
                       criterion.type === 'keyword') && (
                       <div>
                         <label className="text-xs font-medium text-gray-600 block mb-1">
-                          Keywords (comma-separated)
+                          Keywords (pisahkan dengan koma)
                         </label>
                         <input
                           type="text"
@@ -276,7 +349,7 @@ export const JobRequirementForm: React.FC<JobRequirementFormProps> = ({
                                 .filter(Boolean),
                             })
                           }
-                          placeholder="e.g., Python, Django, REST API"
+                          placeholder="mis. Python, Django, REST API"
                           className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
@@ -294,14 +367,18 @@ export const JobRequirementForm: React.FC<JobRequirementFormProps> = ({
               onClick={onClose}
               className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium"
             >
-              Cancel
+              Batal
             </button>
             <button
               type="submit"
               disabled={isSubmitting || isLoading}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50"
             >
-              {isSubmitting ? 'Saving...' : editingJob ? 'Update' : 'Create'}
+              {isSubmitting
+                ? 'Menyimpan...'
+                : editingJob
+                ? 'Perbarui'
+                : 'Simpan'}
             </button>
           </div>
         </form>
