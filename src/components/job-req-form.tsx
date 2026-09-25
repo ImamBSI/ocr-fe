@@ -25,16 +25,30 @@ export const JobRequirementForm: React.FC<JobRequirementFormProps> = ({
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [criteria, setCriteria] = useState<ScoringCriteria[]>([]);
+  const [keywordInputs, setKeywordInputs] = useState<Record<string, string>>(
+    {}
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
   const { createJob, updateJobRequirement, isLoading } = useJobRequirements();
 
+  const syncKeywordInputs = (items: ScoringCriteria[] | undefined) => {
+    const inputs: Record<string, string> = {};
+    (items || []).forEach((c) => {
+      if (c.type === 'skill' || c.type === 'keyword') {
+        inputs[c.id] = (c.keywords || []).join(', ');
+      }
+    });
+    setKeywordInputs(inputs);
+  };
+
   useEffect(() => {
     if (editingJob) {
       setTitle(editingJob.title);
       setDescription(editingJob.description || '');
-      setCriteria(editingJob.criteria);
+      setCriteria(editingJob.criteria || []);
+      syncKeywordInputs(editingJob.criteria);
     } else {
       resetForm();
     }
@@ -44,17 +58,20 @@ export const JobRequirementForm: React.FC<JobRequirementFormProps> = ({
     setTitle('');
     setDescription('');
     setCriteria([]);
+    setKeywordInputs({});
     setError('');
   };
 
   const addCriteria = () => {
+    const id = `criteria-${Date.now()}`;
     setCriteria([
       ...criteria,
       {
         ...DEFAULT_CRITERIA,
-        id: `criteria-${Date.now()}`,
+        id,
       },
     ]);
+    setKeywordInputs((prev) => ({ ...prev, [id]: '' }));
   };
 
   const updateCriteria = (index: number, updates: Partial<ScoringCriteria>) => {
@@ -64,19 +81,27 @@ export const JobRequirementForm: React.FC<JobRequirementFormProps> = ({
   };
 
   const removeCriteria = (index: number) => {
+    const removed = criteria[index];
     setCriteria(criteria.filter((_, i) => i !== index));
+    if (removed) {
+      setKeywordInputs((prev) => {
+        const next = { ...prev };
+        delete next[removed.id];
+        return next;
+      });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!title.trim()) {
-      setError('Job title is required');
+      setError('Judul pekerjaan wajib diisi');
       return;
     }
 
     if (criteria.length === 0) {
-      setError('At least one criteria is required');
+      setError('Minimal satu kriteria diperlukan');
       return;
     }
 
@@ -87,7 +112,17 @@ export const JobRequirementForm: React.FC<JobRequirementFormProps> = ({
       const data = {
         title,
         description,
-        criteria,
+        criteria: criteria.map((c) =>
+          c.type === 'skill' || c.type === 'keyword'
+            ? {
+                ...c,
+                keywords: (keywordInputs[c.id] || '')
+                  .split(',')
+                  .map((k) => k.trim())
+                  .filter(Boolean),
+              }
+            : c
+        ),
       };
 
       if (editingJob) {
@@ -99,7 +134,7 @@ export const JobRequirementForm: React.FC<JobRequirementFormProps> = ({
       resetForm();
       onClose();
     } catch (err: any) {
-      setError(err.message || 'Failed to save job requirement');
+      setError(err.message || 'Gagal menyimpan job requirement');
     } finally {
       setIsSubmitting(false);
     }
@@ -340,14 +375,12 @@ export const JobRequirementForm: React.FC<JobRequirementFormProps> = ({
                         </label>
                         <input
                           type="text"
-                          value={criterion.keywords?.join(', ') || ''}
+                          value={keywordInputs[criterion.id] || ''}
                           onChange={(e) =>
-                            updateCriteria(index, {
-                              keywords: e.target.value
-                                .split(',')
-                                .map((k) => k.trim())
-                                .filter(Boolean),
-                            })
+                            setKeywordInputs((prev) => ({
+                              ...prev,
+                              [criterion.id]: e.target.value,
+                            }))
                           }
                           placeholder="mis. Python, Django, REST API"
                           className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"

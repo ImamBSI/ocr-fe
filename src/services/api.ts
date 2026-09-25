@@ -48,9 +48,6 @@ axiosInstance.interceptors.response.use(
 
 // ==================== FILE UPLOAD ====================
 export const fileApi = {
-  /**
-   * Upload CV file (DOCX atau PDF)
-   */
   uploadCV: async (file: File, jobRequirementId?: string) => {
     const formData = new FormData();
     formData.append('file', file);

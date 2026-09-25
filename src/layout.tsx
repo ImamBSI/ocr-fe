@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import {
   Menu,
   X,
@@ -14,17 +14,19 @@ import { useUIStore } from '@/storage';
 import { useJobRequirements } from '@/hooks/useJobRequirements';
 import { useSystem } from '@/hooks/useSystem';
 
+const menuItems = [
+  { to: '/upload', label: 'Upload CV', icon: Upload },
+  { to: '/candidates', label: 'Candidates', icon: Users },
+  { to: '/ranking', label: 'Ranking', icon: TrendingUp },
+  { to: '/job-req', label: 'Job Requirements', icon: Briefcase },
+];
+
 export const Layout: React.FC = () => {
-  const {
-    sidebarOpen,
-    currentTab,
-    setSidebarOpen,
-    setCurrentTab,
-  } = useUIStore();
+  const { sidebarOpen, setSidebarOpen } = useUIStore();
   const { fetchJobs } = useJobRequirements();
   const { healthCheck } = useSystem();
+  const location = useLocation();
 
-  // Check health on mount
   useEffect(() => {
     const checkHealth = async () => {
       try {
@@ -36,32 +38,11 @@ export const Layout: React.FC = () => {
     };
 
     checkHealth();
-    // Fetch jobs on mount
     fetchJobs();
   }, []);
 
-  const menuItems = [
-    {
-      id: 'upload',
-      label: 'Upload CV',
-      icon: Upload,
-    },
-    {
-      id: 'candidates',
-      label: 'Candidates',
-      icon: Users,
-    },
-    {
-      id: 'ranking',
-      label: 'Ranking',
-      icon: TrendingUp,
-    },
-    {
-      id: 'jobs',
-      label: 'Job Requirements',
-      icon: Briefcase,
-    },
-  ];
+  const currentLabel =
+    menuItems.find((item) => item.to === location.pathname)?.label || '';
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -97,21 +78,24 @@ export const Layout: React.FC = () => {
         <nav className="flex-1 py-4 px-2 space-y-2">
           {menuItems.map((item) => {
             const Icon = item.icon;
-            const isActive = currentTab === item.id;
 
             return (
-              <button
-                key={item.id}
-                onClick={() => setCurrentTab(item.id as any)}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                  isActive
-                    ? 'bg-blue-100 text-blue-600'
-                    : 'text-gray-700 hover:bg-gray-100'
-                }`}
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={({ isActive }) =>
+                  `w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                    isActive
+                      ? 'bg-blue-100 text-blue-600'
+                      : 'text-gray-700 hover:bg-gray-100'
+                  }`
+                }
               >
                 <Icon className="w-5 h-5 shrink-0" />
-                {sidebarOpen && <span className="text-sm font-medium">{item.label}</span>}
-              </button>
+                {sidebarOpen && (
+                  <span className="text-sm font-medium">{item.label}</span>
+                )}
+              </NavLink>
             );
           })}
         </nav>
@@ -136,9 +120,7 @@ export const Layout: React.FC = () => {
         <div className="h-16 bg-white border-b border-gray-200 flex items-center px-6">
           <div className="flex items-center gap-2">
             <Home className="w-5 h-5 text-gray-400" />
-            <span className="text-sm text-gray-500">
-              {menuItems.find((item) => item.id === currentTab)?.label}
-            </span>
+            <span className="text-sm text-gray-500">{currentLabel}</span>
           </div>
         </div>
 

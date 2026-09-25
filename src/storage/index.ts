@@ -161,22 +161,10 @@ export const useJobStore = create<JobRequirementState>((set) => ({
 // ==================== UI STORE ====================
 interface UIState {
   sidebarOpen: boolean;
-  currentTab: 'upload' | 'candidates' | 'ranking' | 'jobs';
-  showModal: boolean;
-  modalType: 'job-create' | 'job-edit' | 'none';
   setSidebarOpen: (open: boolean) => void;
-  setCurrentTab: (tab: 'upload' | 'candidates' | 'ranking' | 'jobs') => void;
-  setShowModal: (show: boolean) => void;
-  setModalType: (type: 'job-create' | 'job-edit' | 'none') => void;
 }
 
 export const useUIStore = create<UIState>((set) => ({
   sidebarOpen: true,
-  currentTab: 'upload',
-  showModal: false,
-  modalType: 'none',
   setSidebarOpen: (open) => set({ sidebarOpen: open }),
-  setCurrentTab: (tab) => set({ currentTab: tab }),
-  setShowModal: (show) => set({ showModal: show }),
-  setModalType: (type) => set({ modalType: type }),
 }));
