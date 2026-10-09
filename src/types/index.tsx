@@ -7,8 +7,12 @@ export interface Candidate {
   experience_years: number;
   skills: string[];
   education?: string;
+  summary?: string;
+  parsed_by?: string;
   score?: number;
   matched_criteria?: Record<string, number>;
+  rationale?: Record<string, string | null>;
+  confidence?: number;
   cv_text?: string;
   file_path?: string;
   file_name?: string;
@@ -68,6 +72,8 @@ export interface ScoreResponse {
   candidate_id: string;
   score: number;
   matched_criteria: Record<string, number>;
+  rationale?: Record<string, string | null>;
+  confidence?: number;
   rank: number;
   status: 'success' | 'error';
   message?: string;

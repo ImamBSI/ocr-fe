@@ -161,6 +161,11 @@ export const CandidateList: React.FC<CandidateListProps> = ({
                         {candidate.score?.toFixed(1) ?? '0.0'}
                       </div>
                       <div className="text-xs">Score</div>
+                      {typeof candidate.confidence === 'number' && (
+                        <div className="text-[10px] opacity-75 mt-0.5">
+                          AI conf: {(candidate.confidence * 100).toFixed(0)}%
+                        </div>
+                      )}
                     </div>
                   )}
 
@@ -189,6 +194,21 @@ export const CandidateList: React.FC<CandidateListProps> = ({
                   </div>
                   <p className="text-sm text-gray-600 ml-6">{candidate.education}</p>
                 </div>
+
+                {/* Summary */}
+                {candidate.summary && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="font-medium text-gray-700">Summary</span>
+                      {candidate.parsed_by === 'llm' && (
+                        <span className="text-[10px] px-1.5 py-0.5 bg-purple-100 text-purple-700 rounded-full">
+                          AI parsed
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm text-gray-600 ml-6">{candidate.summary}</p>
+                  </div>
+                )}
 
                 {/* Skills */}
                 <div>
@@ -226,18 +246,25 @@ export const CandidateList: React.FC<CandidateListProps> = ({
                           ([key, value]) => (
                             <div
                               key={key}
-                              className="flex items-center justify-between bg-white border border-gray-300 rounded px-3 py-2"
+                              className="flex flex-col bg-white border border-gray-300 rounded px-3 py-2"
                             >
-                              <span className="text-xs font-medium text-gray-600">
-                                {key}:
-                              </span>
-                              <span
-                                className={`text-xs font-bold ${getScoreBadge(
-                                  value as number
-                                )}`}
-                              >
-                                {(value as number).toFixed(1)}
-                              </span>
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs font-medium text-gray-600">
+                                  {key}:
+                                </span>
+                                <span
+                                  className={`text-xs font-bold ${getScoreBadge(
+                                    value as number
+                                  )}`}
+                                >
+                                  {(value as number).toFixed(1)}
+                                </span>
+                              </div>
+                              {candidate.rationale?.[key] && (
+                                <p className="text-[10px] text-gray-500 mt-1 leading-tight italic">
+                                  “{candidate.rationale[key]}”
+                                </p>
+                              )}
                             </div>
                           )
                         )}
