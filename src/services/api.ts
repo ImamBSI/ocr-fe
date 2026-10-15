@@ -11,6 +11,7 @@ import type {
 } from '@/types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
+const API_KEY = import.meta.env.VITE_API_KEY;
 
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
@@ -22,11 +23,10 @@ const axiosInstance: AxiosInstance = axios.create({
 // Request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
-    // Bisa tambahkan token auth di sini kalau perlu
-    // const token = localStorage.getItem('auth_token');
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
+    // Sertakan API key jika dikonfigurasi (harus sama dengan API_KEY backend)
+    if (API_KEY) {
+      config.headers['X-API-Key'] = API_KEY;
+    }
     return config;
   },
   (error) => {

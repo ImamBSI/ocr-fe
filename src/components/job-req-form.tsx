@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Plus, Trash2 } from 'lucide-react';
 import type { JobRequirement, ScoringCriteria } from '@/types';
 import { useJobRequirements } from '@/hooks/useJobRequirements';
+import { pasteToPlainText } from '@/utils/clipboard';
 
 interface JobRequirementFormProps {
   isOpen: boolean;
@@ -90,6 +91,47 @@ export const JobRequirementForm: React.FC<JobRequirementFormProps> = ({
         return next;
       });
     }
+  };
+
+  /**
+   * Sisipkan teks di posisi kursor (bukan menimpa seluruh isi) dan
+   * kembalikan posisi kursor. Dipakai untuk paste agar bullet tetap terjaga.
+   */
+  const insertAtCursor = (
+    e: React.ClipboardEvent<HTMLTextAreaElement>,
+    value: string,
+    setter: (next: string) => void
+  ) => {
+    e.preventDefault();
+    const el = e.currentTarget;
+    const start = el.selectionStart ?? el.value.length;
+    const end = el.selectionEnd ?? el.value.length;
+    const next = el.value.slice(0, start) + value + el.value.slice(end);
+    setter(next);
+    const cursor = start + value.length;
+    requestAnimationFrame(() => {
+      el.selectionStart = cursor;
+      el.selectionEnd = cursor;
+    });
+  };
+
+  const handleDescriptionPaste = (
+    e: React.ClipboardEvent<HTMLTextAreaElement>
+  ) => {
+    const text = pasteToPlainText(e.clipboardData);
+    if (!text) return;
+    insertAtCursor(e, text, setDescription);
+  };
+
+  const handleCriteriaDescriptionPaste = (
+    e: React.ClipboardEvent<HTMLTextAreaElement>,
+    index: number
+  ) => {
+    const text = pasteToPlainText(e.clipboardData);
+    if (!text) return;
+    insertAtCursor(e, text, (next) =>
+      updateCriteria(index, { description: next })
+    );
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -188,6 +230,7 @@ export const JobRequirementForm: React.FC<JobRequirementFormProps> = ({
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              onPaste={handleDescriptionPaste}
               placeholder="Deskripsi pekerjaan dan tanggung jawab..."
               rows={4}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -361,6 +404,7 @@ export const JobRequirementForm: React.FC<JobRequirementFormProps> = ({
                       onChange={(e) =>
                         updateCriteria(index, { description: e.target.value })
                       }
+                      onPaste={(e) => handleCriteriaDescriptionPaste(e, index)}
                       placeholder="Cara penilaian kriteria ini..."
                       rows={2}
                       className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"

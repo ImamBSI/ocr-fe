@@ -20,7 +20,6 @@ export const useProcessCV = () => {
           const candidate: Candidate = {
             ...result,
             cv_text: result.cv_text,
-            file_path: '',
             file_name: '',
             score: 0,
             matched_criteria: {},

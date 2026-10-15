@@ -9,12 +9,12 @@ export interface Candidate {
   education?: string;
   summary?: string;
   parsed_by?: string;
+  job_requirement_id?: string;
   score?: number;
   matched_criteria?: Record<string, number>;
   rationale?: Record<string, string | null>;
   confidence?: number;
   cv_text?: string;
-  file_path?: string;
   file_name?: string;
   created_at?: string;
   ranking?: number;
@@ -47,7 +47,7 @@ export interface JobRequirement {
 export interface UploadResponse {
   id: string;
   file_name: string;
-  file_path: string;
+  job_requirement_id?: string;
   status: 'pending' | 'processing' | 'completed' | 'failed';
   message?: string;
 }
@@ -99,6 +99,7 @@ export interface PaginationParams {
   page_size: number;
   sort_by?: 'score' | 'name' | 'created_at';
   sort_order?: 'asc' | 'desc';
+  job_requirement_id?: string;
 }
 
 export interface PaginatedResponse<T> {

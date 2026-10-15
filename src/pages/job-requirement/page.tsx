@@ -67,7 +67,7 @@ export const JobRequirementsPage: React.FC = () => {
                     {job.title}
                   </h3>
                   {job.description && (
-                    <p className="text-gray-600 text-sm mb-3">
+                    <p className="text-gray-600 text-sm mb-3 whitespace-pre-line">
                       {job.description}
                     </p>
                   )}
