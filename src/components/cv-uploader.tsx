@@ -52,17 +52,20 @@ export const CVUploader: React.FC<CVUploaderProps> = ({
   };
 
   const handleFiles = (files: FileList) => {
-    const fileArray = Array.from(files).filter((file) => {
-      const isPDF = file.type === 'application/pdf';
-      const isDOCX =
-        file.type ===
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-      return isPDF || isDOCX;
-    });
+    const allowedTypes = [
+      'application/pdf',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'image/jpeg',
+      'image/png',
+      'image/webp',
+    ];
+    const fileArray = Array.from(files).filter((file) =>
+      allowedTypes.includes(file.type)
+    );
 
     if (fileArray.length === 0) {
       setUploadStatus('error');
-      setUploadMessage('Only PDF and DOCX files are supported');
+      setUploadMessage('Only PDF, DOCX, JPG, PNG files are supported');
       return;
     }
 
@@ -134,7 +137,7 @@ export const CVUploader: React.FC<CVUploaderProps> = ({
           ref={fileInputRef}
           type="file"
           multiple={!singleFile}
-          accept=".pdf,.docx"
+          accept=".pdf,.docx,.jpg,.jpeg,.png,.webp"
           onChange={handleChange}
           className="hidden"
         />
@@ -145,7 +148,7 @@ export const CVUploader: React.FC<CVUploaderProps> = ({
             Drag & drop your files here
           </p>
           <p className="text-sm text-gray-500">
-            or click to select files (PDF, DOCX)
+            or click to select files (PDF, DOCX, JPG, PNG)
           </p>
           {!selectedJob && (
             <p className="text-xs text-amber-600 mt-3 bg-amber-50 px-3 py-1 rounded">

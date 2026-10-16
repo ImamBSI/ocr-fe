@@ -35,8 +35,8 @@ export const UploadPage: React.FC = () => {
           Upload CV Documents
         </h1>
         <p className="text-gray-600">
-          Upload candidate CVs in PDF or DOCX format. Our system will
-          automatically extract and analyze the information.
+          Upload candidate CVs in PDF, DOCX, or image (JPG/PNG) format. Our
+          system will automatically extract and analyze the information.
         </p>
       </div>
 
